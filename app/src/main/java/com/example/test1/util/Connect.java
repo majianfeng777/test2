@@ -31,16 +31,23 @@ public class Connect {
         String reply = null;
         StringBuilder sb = new StringBuilder();
         reply=br.readLine();
-//        String data[]=reply.split("_");
-//        sb.append("教室："+data[0]+"已到："+data[1]+"未到："+data[2]+"总共："+data[3].replace("'",""));
         sb.append(reply);
         return sb.toString();
     }
-
-    public void release() throws IOException {
-        inputStream.close();
-        outputStream.close();
-        socket.close();
+    public void closeInput() throws IOException {
+        if (inputStream!=null){
+            inputStream.close();
+        }
+    }
+    public void closeOutput() throws IOException {
+        if (outputStream!=null){
+            outputStream.close();
+        }
+    }
+    public void closeSocket() throws IOException {
+        if (socket!=null){
+            socket.close();
+        }
     }
 
 }

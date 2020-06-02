@@ -13,11 +13,13 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.test1.R;
+import com.example.test1.util.TextSpeech;
 import com.example.test1.view.setview.monitorSetView;
 import com.videogo.errorlayer.ErrorInfo;
 import com.videogo.openapi.EZConstants;
@@ -29,7 +31,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import fragment.*;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -38,23 +39,22 @@ import okhttp3.Response;
 
 public class monitorView extends AppCompatActivity implements View.OnClickListener {
     private Button btn_back, btn_set;
-    private Button btn_control,btn_voicetalk,btn_store;
+    private TextView text_monitor;
     private EZPlayer player;
     private SurfaceView surfaceView;
     private String accessToken;  //
     private long expireTime;     //到期时间
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
-    private controlFragment controlfragment;
-    private storeFragment storefragment;
-    private voiceTalkFragment voicetalkfragment;
+    private TextSpeech textSpeech;
+    private boolean isAdmin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.moniorview);
         init();
         displayView();
-
+        initTextToSpeech();
     }
     Handler mHandler = new Handler() {
         @Override
@@ -135,16 +135,12 @@ public class monitorView extends AppCompatActivity implements View.OnClickListen
     private void init() {
         btn_back = (Button) findViewById(R.id.btn_back);
         btn_set = (Button) findViewById(R.id.btn_set);
-        btn_control=(Button)findViewById(R.id.btn_control);
-        btn_voicetalk=(Button)findViewById(R.id.btn_voicetalk);
-        btn_store=(Button)findViewById(R.id.btn_store);
         surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
-
-        btn_control.setOnClickListener(this);
-        btn_voicetalk.setOnClickListener(this);
-        btn_store.setOnClickListener(this);
+        text_monitor=(TextView)findViewById(R.id.text_moniorview);
         btn_back.setOnClickListener(this);
         btn_set.setOnClickListener(this);
+        Intent intent=getIntent();
+        text_monitor.setText(intent.getStringExtra("studentNum"));
         preferences=getSharedPreferences("data",MODE_PRIVATE);
         editor=preferences.edit();
         //初始化设置
@@ -199,39 +195,26 @@ public class monitorView extends AppCompatActivity implements View.OnClickListen
             e.printStackTrace();
         }
     }
-
+    private void initTextToSpeech() {
+        int arrived=50;
+        int absences=10;
+        final String text="当前教室一共"+text_monitor.getText().toString()+"人已到"+arrived+"人"+"未到"+absences+"人";
+        textSpeech=new TextSpeech(this,text);
+    }
     @Override
     public void onClick(View v) {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         switch (v.getId()) {
             case R.id.btn_back:
+                  textSpeech.stop();
                   this.finish();
                 break;
             case R.id.btn_set:
+                textSpeech.stop();
                 startActivity(new Intent(monitorView.this, monitorSetView.class));
                 break;
-            case R.id.btn_control:
-                if (controlfragment==null){
-                    controlfragment=new controlFragment();
-                }
-                transaction.replace(R.id.fragment_container,controlfragment);
 
-                break;
-            case R.id.btn_store:
-                if (storefragment==null){
-                    storefragment=new storeFragment();
-                }
-                transaction.replace(R.id.fragment_container,storefragment);
-
-                break;
-            case R.id.btn_voicetalk:
-                if (voicetalkfragment==null){
-                    voicetalkfragment=new voiceTalkFragment();
-                }
-                transaction.replace(R.id.fragment_container,voicetalkfragment);
-
-                break;
         }
         transaction.commit();
     }
@@ -244,8 +227,7 @@ public class monitorView extends AppCompatActivity implements View.OnClickListen
             player.release();
             //停止直播
             // player.stopRealPlay();
-
-
         }
+        textSpeech.release();
     }
 }

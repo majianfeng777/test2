@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.test1.R;
+import com.example.test1.util.TextSpeech;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -40,7 +41,7 @@ public class secondaryCameraView extends AppCompatActivity implements View.OnCli
     private Button btn_back,btn_set;
     private AlertDialog.Builder alterdialog;
     private MediaPlayer mediaPlayer;
-    private TextToSpeech textToSpeech;
+    private TextSpeech textSpeech;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,19 +142,7 @@ public class secondaryCameraView extends AppCompatActivity implements View.OnCli
         int arrived=30;
         int absences=2;
         final String text="当前教室一共"+text_num_secondarycv.getText().toString()+"人已到"+arrived+"人"+"未到"+absences+"人";
-        textToSpeech=new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status==TextToSpeech.SUCCESS){
-                    // 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
-                    textToSpeech.setPitch(1.0f);
-                    // 设置语速
-                    textToSpeech.setSpeechRate(0.8f);
-                    textToSpeech.setLanguage(Locale.CHINESE);
-                    textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH, null);
-                }
-            }
-        });
+        textSpeech=new TextSpeech(this,text);
     }
     /** 视频播放全屏 **/
 //    private void showCustomView(View view, WebChromeClient.CustomViewCallback callback) {
@@ -189,7 +178,7 @@ public class secondaryCameraView extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_secondarycv_back:
-                textToSpeech.stop();
+                textSpeech.stop();
                 this.finish();
                 break;
 
@@ -197,18 +186,8 @@ public class secondaryCameraView extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        textToSpeech.stop();
-        textToSpeech.shutdown();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (textToSpeech!=null){
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-        }
+        textSpeech.release();
     }
 }

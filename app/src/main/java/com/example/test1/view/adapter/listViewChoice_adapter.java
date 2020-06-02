@@ -2,6 +2,7 @@ package com.example.test1.view.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.service.voice.VoiceInteractionService;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test1.R;
 import com.example.test1.item.listViewChoice_item;
+import com.example.test1.item.listViewClassroom_item;
+import com.example.test1.util.Connect;
 import com.example.test1.view.setview.adminSetView;
 import com.example.test1.view.listViewClassroom;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_adapter.ViewHolder> {
     private List<listViewChoice_item> itemList;
+    public static List<listViewClassroom_item> list;
     private Context mContext;
     static class ViewHolder extends RecyclerView.ViewHolder{
         View gridview;
@@ -36,6 +42,9 @@ public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_
         itemList=items;
         mContext=context;
     }
+    public listViewChoice_adapter(){
+
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,8 +56,7 @@ public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_
                 int position=holder.getAdapterPosition();
                 switch (position){
                     case 0:
-
-                        mContext.startActivity(new Intent(mContext, listViewClassroom.class));
+                        init();
                         break;
                     case 1:
                         mContext.startActivity(new Intent(mContext, adminSetView.class));
@@ -65,7 +73,7 @@ public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_
                 int position=holder.getAdapterPosition();
                 switch (position){
                     case 0:
-                        mContext.startActivity(new Intent(mContext,listViewClassroom.class));
+                        init();
                         break;
                     case 1:
                         mContext.startActivity(new Intent(mContext,adminSetView.class));
@@ -89,4 +97,29 @@ public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_
         return itemList.size();
     }
 
+    private void init(){
+        list=new ArrayList<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Connect connect=new Connect();
+                    connect.post("进入教室");
+                    String[] data;
+                    if ((data=connect.get().split(","))!=null){
+                        for (int i=0;i<data.length;i++){
+                            String[] mdata=data[i].split("_");
+                            listViewClassroom_item mndata=new listViewClassroom_item(Integer.valueOf(mdata[0]),Integer.valueOf(mdata[1]),Integer.valueOf(mdata[2]));
+                            list.add(mndata);
+                        }
+                        mContext.startActivity(new Intent(mContext, listViewClassroom.class));
+                        connect.closeInput();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 }

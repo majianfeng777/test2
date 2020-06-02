@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.test1.R;
+import com.example.test1.util.TextSpeech;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -44,6 +45,7 @@ public class cameraView extends AppCompatActivity implements View.OnClickListene
     private TextToSpeech textToSpeech;
     private Handler childHandler, mainHandler;
     private TextView text_cameraview_num;
+    private TextSpeech textSpeech;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,19 +150,7 @@ public class cameraView extends AppCompatActivity implements View.OnClickListene
         int arrived=50;
         int absences=10;
         final String text="当前教室一共"+text_cameraview_num.getText().toString()+"人已到"+arrived+"人"+"未到"+absences+"人";
-        textToSpeech=new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status==TextToSpeech.SUCCESS){
-                    // 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
-                    textToSpeech.setPitch(1.0f);
-                    // 设置语速
-                    textToSpeech.setSpeechRate(0.8f);
-                    textToSpeech.setLanguage(Locale.CHINESE);
-                    textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH, null);
-                }
-            }
-        });
+        textSpeech=new TextSpeech(this,text);
     }
 
     private void initCamera2() {
@@ -204,25 +194,17 @@ public class cameraView extends AppCompatActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_cameraview_back:
-                textToSpeech.stop();
+                textSpeech.stop();
                 this.finish();
                 break;
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        textToSpeech.stop();
-        textToSpeech.shutdown();
-    }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (textToSpeech!=null){
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-        }
+        textSpeech.release();
     }
 }
