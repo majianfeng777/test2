@@ -1,4 +1,4 @@
-package com.example.test1.view;
+package com.example.test1.view.display;
 
 import android.content.Intent;
 import android.os.Bundle;

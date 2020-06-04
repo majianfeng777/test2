@@ -8,10 +8,10 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class Connect {
-    public Socket socket;
+    public  Socket socket;
     public InputStream inputStream;
     public OutputStream outputStream;
-    public static String ip="192.168.43.73";
+    public static String ip="192.168.43.57";
     public static int port=9988;
     public Connect() throws IOException {
         while (socket==null){
@@ -35,19 +35,13 @@ public class Connect {
         return sb.toString();
     }
     public void closeInput() throws IOException {
-        if (inputStream!=null){
-            inputStream.close();
-        }
+        if (inputStream!=null) inputStream.close();
     }
     public void closeOutput() throws IOException {
-        if (outputStream!=null){
-            outputStream.close();
-        }
+        if (outputStream!=null) outputStream.close();
     }
     public void closeSocket() throws IOException {
-        if (socket!=null){
-            socket.close();
-        }
+        if (socket!=null) socket.close();
     }
 
 }

@@ -2,7 +2,6 @@ package com.example.test1.view.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.service.voice.VoiceInteractionService;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import com.example.test1.item.listViewChoice_item;
 import com.example.test1.item.listViewClassroom_item;
 import com.example.test1.util.Connect;
 import com.example.test1.view.setview.adminSetView;
-import com.example.test1.view.listViewClassroom;
+import com.example.test1.view.display.listViewClassroom;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,13 +103,18 @@ public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_
             public void run() {
                 try {
                     Connect connect=new Connect();
-                    connect.post("进入教室");
+                    connect.post("into");
                     String[] data;
                     if ((data=connect.get().split(","))!=null){
                         for (int i=0;i<data.length;i++){
                             String[] mdata=data[i].split("_");
-                            listViewClassroom_item mndata=new listViewClassroom_item(Integer.valueOf(mdata[0]),Integer.valueOf(mdata[1]),Integer.valueOf(mdata[2]));
-                            list.add(mndata);
+                            for (int m=0;m<4;m++){
+                                if (mdata[m].equals("")||mdata[m].equals(" ")){
+                                    mdata[m]="0";
+                                }
+                            }
+                            listViewClassroom_item ndata=new listViewClassroom_item(Integer.valueOf(mdata[0]),Integer.valueOf(mdata[1]),Integer.valueOf(mdata[2]),mdata[3]);
+                            list.add(ndata);
                         }
                         mContext.startActivity(new Intent(mContext, listViewClassroom.class));
                         connect.closeInput();

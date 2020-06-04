@@ -1,8 +1,10 @@
-package com.example.test1.view;
+package com.example.test1.view.display;
 
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test1.R;
 import com.example.test1.item.listViewChoice_item;
+import com.example.test1.util.Connect;
 import com.example.test1.view.adapter.listViewChoice_adapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +43,6 @@ public class listViewChoice extends AppCompatActivity implements View.OnClickLis
         listViewChoice_item b=new listViewChoice_item("管理员设置",R.drawable.admin_icon);
         list.add(b);
 
-
-
     }
 
 
@@ -49,7 +51,42 @@ public class listViewChoice extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()){
             case R.id.btn_listview_choice_back:
                 this.finish();
+                sendOutConn();
                 break;
+        }
+    }
+    private Connect connect;
+
+    private void sendOutConn() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    connect=new Connect();
+                    connect.post("out");
+                    final String get=connect.get();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(listViewChoice.this,get,Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            if (connect!=null){
+                connect.closeInput();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

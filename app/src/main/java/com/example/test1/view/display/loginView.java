@@ -1,4 +1,4 @@
-package com.example.test1.view;
+package com.example.test1.view.display;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -103,11 +103,47 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
             case R.id.signIn:
                 setAlpha(signIn,125);
                 loading.show();
+                loading.setVisibility(View.VISIBLE);
                 verifyToService();  //判断账号密码
+                loadClick(); //超时
                 break;
-
         }
     }
+
+    private void outTimeConn(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setAlpha(signIn,255);
+                loading.hide();
+                loading.setVisibility(View.INVISIBLE);
+                Toast("超时登入,请重试");
+            }
+        });
+    }
+    private void loadClick() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(9000);
+                    if (connect!=null){
+                        if (!connect.socket.isConnected()) {
+                            outTimeConn();
+                            connect.closeSocket();
+                        }
+                    }else{
+                        outTimeConn();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
     private void setAlpha(Button button,int num){
         button.getBackground().mutate().setAlpha(num);
     }
@@ -116,8 +152,11 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
         super.onPause();
         setAlpha(signIn,255);
         loading.hide();
+        loading.setVisibility(View.INVISIBLE);
         try {
-            connect.closeInput();
+            if (connect!=null){
+                connect.closeInput();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,7 +166,9 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
     protected void onDestroy() {
         super.onDestroy();
         try {
-            connect.closeSocket();
+            if (connect!=null){
+                connect.closeSocket();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

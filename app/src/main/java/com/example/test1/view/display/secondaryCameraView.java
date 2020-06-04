@@ -1,4 +1,4 @@
-package com.example.test1.view;
+package com.example.test1.view.display;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -8,7 +8,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -29,13 +28,12 @@ import com.example.test1.R;
 import com.example.test1.util.TextSpeech;
 
 import java.io.IOException;
-import java.util.Locale;
 
 public class secondaryCameraView extends AppCompatActivity implements View.OnClickListener {
     private WebView webView;
     private SurfaceView surfaceView;
     private WebSettings mWebSettings;
-    private String urlWeb = "http://192.168.43.1:8080/browserfs.html";
+    private String urlWeb; // = "http://192.168.43.1:8080/browserfs.html"
     private TextView text_num_secondarycv;
     private EditText editText;
     private Button btn_back,btn_set;
@@ -53,12 +51,9 @@ public class secondaryCameraView extends AppCompatActivity implements View.OnCli
         text_num_secondarycv=(TextView)findViewById(R.id.text_secondarycv);
         Intent intent=getIntent();
         text_num_secondarycv.setText(intent.getStringExtra("studentNum1"));
+        urlWeb=intent.getStringExtra("webUrl");
         alterdialog=new AlertDialog.Builder(secondaryCameraView.this);
-//        surfaceView=(SurfaceView)findViewById(R.id.surfaceView_sencondarycv);
         connect();
-//        display();
-//        surfaceView.getHolder().addCallback(callback);
-
         btn_set.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +65,7 @@ public class secondaryCameraView extends AppCompatActivity implements View.OnCli
                     public void onClick(DialogInterface dialog, int which) {
                         if (editText.length()!=0){
                             urlWeb=editText.getText().toString();
+                            connect();
                         }else{
                             Toast.makeText(secondaryCameraView.this,"ip不能为空",Toast.LENGTH_SHORT).show();
                         }
@@ -108,7 +104,6 @@ public class secondaryCameraView extends AppCompatActivity implements View.OnCli
 //        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true);//设置js可以直接打开窗口，如window.open()，默认为false
 //        mWebSettings.setJavaScriptEnabled(true);//是否允许JavaScript脚本运行，默认为false。设置true时，会提醒可能造成XSS漏洞
 //        mWebSettings.setSupportZoom(true);//是否可以缩放，默认true
-
 //        mWebSettings.setBuiltInZoomControls(true);//是否显示缩放按钮，默认false
 //        mWebSettings.setUseWideViewPort(true);//设置此属性，可任意比例缩放。大视图模式
 //        mWebSettings.setLoadWithOverviewMode(true);//和setUseWideViewPort(true)一起解决网页自适应问题
@@ -132,9 +127,6 @@ public class secondaryCameraView extends AppCompatActivity implements View.OnCli
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed(); //表示等待证书响应
-                // handler.cancel(); //表示挂起连接，为默认方式
-
-                // handler.handleMessage(null); //可做其他处理
             }
         });
     }

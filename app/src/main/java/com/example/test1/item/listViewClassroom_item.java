@@ -4,10 +4,12 @@ public class listViewClassroom_item {
     private int classNum;
     private int studentNum;
     private int arrivedNum;
-    public listViewClassroom_item(int classNum, int studentNum, int arrivedNum){
+    private String ipCamera;
+    public listViewClassroom_item(int classNum, int studentNum, int arrivedNum,String ipCamera){
         this.classNum=classNum;
         this.studentNum=studentNum;
         this.arrivedNum=arrivedNum;
+        this.ipCamera=ipCamera;
     }
     public int getClassNum() {
         return classNum;
@@ -21,4 +23,7 @@ public class listViewClassroom_item {
         return studentNum;
     }
 
+    public String getIpCamera() {
+        return ipCamera;
+    }
 }

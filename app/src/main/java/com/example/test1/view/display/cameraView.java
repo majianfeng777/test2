@@ -1,4 +1,4 @@
-package com.example.test1.view;
+package com.example.test1.view.display;
 
 
 import android.Manifest;
@@ -10,12 +10,10 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
-import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.speech.tts.TextToSpeech;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -32,17 +30,13 @@ import com.example.test1.R;
 import com.example.test1.util.TextSpeech;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 public class cameraView extends AppCompatActivity implements View.OnClickListener {
     private SurfaceView surfaceView;
     private CameraManager mCameraManager;
     private SurfaceHolder surfaceHolder;
-    private boolean isPreview;
     private CameraCaptureSession mCameraCaptureSession;
     private CameraDevice mCameraDevice;
-    private ImageReader mImageReader;
-    private TextToSpeech textToSpeech;
     private Handler childHandler, mainHandler;
     private TextView text_cameraview_num;
     private TextSpeech textSpeech;

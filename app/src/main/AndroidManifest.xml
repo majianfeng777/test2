@@ -32,20 +32,20 @@
         android:theme="@style/AppTheme"
         tools:overrideLibrary="com.videogo.openapi">
 
-        <activity android:name=".view.beginAnimationView" android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity android:name=".view.display.beginAnimationView" android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.monitorView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".view.display.monitorView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".view.setview.monitorSetView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".view.loginView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".view.listViewClassroom" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".view.cameraView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".view.secondaryCameraView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".view.listViewChoice" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".view.display.loginView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".view.display.listViewClassroom" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".view.display.cameraView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".view.display.secondaryCameraView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".view.display.listViewChoice" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".view.setview.adminSetView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
     </application>
 

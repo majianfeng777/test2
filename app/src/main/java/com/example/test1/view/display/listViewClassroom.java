@@ -1,6 +1,5 @@
-package com.example.test1.view;
+package com.example.test1.view.display;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,10 +15,6 @@ import com.example.test1.item.listViewClassroom_item;
 import com.example.test1.util.Connect;
 import com.example.test1.view.adapter.listViewChoice_adapter;
 import com.example.test1.view.adapter.listViewClassroom_adapter;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class listViewClassroom extends AppCompatActivity implements View.OnClickListener{
     @Override
@@ -45,12 +40,13 @@ public class listViewClassroom extends AppCompatActivity implements View.OnClick
                    case 1:
                        Intent intent1=new Intent(listViewClassroom.this, secondaryCameraView.class);
                        intent1.putExtra("studentNum1",String.valueOf(item.getStudentNum()));
-                       startActivity(intent1);   //手机摄像头
+                       intent1.putExtra("webUrl",item.getIpCamera());
+                       startActivity(intent1);   //另一个手机摄像头
                        break;
                    case 2:
                        Intent intent2=new Intent(listViewClassroom.this, cameraView.class);
                        intent2.putExtra("studentNum2",String.valueOf(item.getStudentNum()));
-                       startActivity(intent2);    //另一个手机摄像头
+                       startActivity(intent2);    //手机摄像头
                        break;
                }
             }
@@ -97,6 +93,5 @@ public class listViewClassroom extends AppCompatActivity implements View.OnClick
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 }
