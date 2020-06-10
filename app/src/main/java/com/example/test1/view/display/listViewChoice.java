@@ -1,11 +1,14 @@
 package com.example.test1.view.display;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.ActionMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -50,43 +53,61 @@ public class listViewChoice extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_listview_choice_back:
-                this.finish();
                 sendOutConn();
+                this.finish();
                 break;
         }
     }
-    private Connect connect;
-
     private void sendOutConn() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    connect=new Connect();
-                    connect.post("out");
-                    final String get=connect.get();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(listViewChoice.this,get,Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    if (Connect.getSocket().isConnected()){
+                        Connect.post("out");
+                        final String get=Connect.get();
+                        Message message=new Message();
+                        message.what=1;
+                        message.obj=get;
+                        handler.sendMessage(message);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(listViewChoice.this,get,Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+//                    connect=new Connect();
+//                    connect.post("out");
+//                    final String get=connect.get();
+//                    Message message=new Message();
+//                    message.what=1;
+//                    message.obj=get;
+//                    handler.sendMessage(message);
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Toast.makeText(listViewChoice.this,get,Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
     }
-
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (msg.what==1){
+                Toast.makeText(listViewChoice.this,msg.obj.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
     @Override
     protected void onPause() {
         super.onPause();
-        try {
-            if (connect!=null){
-                connect.closeInput();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 }

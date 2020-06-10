@@ -171,7 +171,7 @@ public class cameraView extends AppCompatActivity implements View.OnClickListene
         if (requestCode == 1){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 try {
-                    mCameraManager.openCamera("0",stateCallback,mainHandler);
+                    mCameraManager.openCamera("1",stateCallback,mainHandler);
                 }catch (CameraAccessException e){
                     e.printStackTrace();
                 }catch (SecurityException e){

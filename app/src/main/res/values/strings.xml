@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Monitor</string>
-    <string name="introduce">test</string>
+    <string name="app_name">教室监控</string>
+    <string name="introduce">monitor</string>
 </resources>

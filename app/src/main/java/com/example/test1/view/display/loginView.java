@@ -24,7 +24,6 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
     private Connect connect;
     private CheckBox checkBox;
     private boolean isAdmin=false;
-    private String isLogin;
     private EditText account,password;
     private AVLoadingIndicatorView loading;
 
@@ -32,7 +31,17 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loginview);
-        init();
+        init();  //初始化
+    }
+
+    private void init() {
+        signIn=(Button)findViewById(R.id.signIn);
+        checkBox=(CheckBox) findViewById(R.id.admin);
+        account=(EditText)findViewById(R.id.account);
+        password=(EditText)findViewById(R.id.password);
+        signIn.setOnClickListener(this);
+        loading=findViewById(R.id.loading);
+
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -45,24 +54,17 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
         });
     }
 
-
-    private void init() {
-        signIn=(Button)findViewById(R.id.signIn);
-        checkBox=(CheckBox) findViewById(R.id.admin);
-        account=(EditText)findViewById(R.id.account);
-        password=(EditText)findViewById(R.id.password);
-        signIn.setOnClickListener(this);
-        loading=findViewById(R.id.loading);
-    }
     private void verifyToService(){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    connect=new Connect();
-                    connect.post(account.getText().toString()+"_"+password.getText().toString());
-                    if ((isLogin=connect.get())!=null){
-                        if (isLogin.equals("true")){
+                    if (Connect.getSocket().isConnected()){
+                        Connect.post(account.getText().toString()+"_"+password.getText().toString());
+                    }
+                    final String response;
+                    if ((response=Connect.get())!=null){
+                        if (response.equals("true")){
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -70,29 +72,59 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
                                 }
                             });
                             Log.d("loginView:    ","true");
-                            if (isAdmin){
-                                startActivity(new Intent(loginView.this, listViewChoice.class));
-                            }else {
-                                startActivity(new Intent(loginView.this, monitorView.class));
-                            }
+                            startActivity();
                         }
                         else{
                             Log.d("loginView:     ","false");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast(isLogin);
+                                    Toast(response);
                                 }
                             });
-
                         }
                     }
+//                    connect=new Connect();
+//                    connect.post(account.getText().toString()+"_"+password.getText().toString());
+//                    final String response;
+//                    if ((response=connect.get())!=null){
+//                        if (response.equals("true")){
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    Toast("登入成功");
+//                                }
+//                            });
+//                            Log.d("loginView:    ","true");
+//                            startActivity();
+//                        }
+//                        else{
+//                            Log.d("loginView:     ","false");
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    Toast(response);
+//                                }
+//                            });
+//                        }
+//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
     }
+
+    //跳转界面
+    private void startActivity(){
+        if (isAdmin){
+            startActivity(new Intent(loginView.this, listViewChoice.class));
+        }else {
+            startActivity(new Intent(loginView.this, monitorView.class));
+        }
+    }
+
+    //弹出事件
     private void Toast(String text) {
         Toast.makeText(this,text,Toast.LENGTH_SHORT).show();
     }
@@ -101,40 +133,55 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.signIn:
-                setAlpha(signIn,125);
-                loading.show();
-                loading.setVisibility(View.VISIBLE);
+                loadingView(true);  //加载动画显示
                 verifyToService();  //判断账号密码
-                loadClick(); //超时
+                outTimeLoading(); //超时
                 break;
         }
     }
 
-    private void outTimeConn(){
+    //加载视图
+    private void loadingView(boolean isShow){
+        if (isShow){
+            signIn.getBackground().mutate().setAlpha(125);
+            loading.show();
+            loading.setVisibility(View.VISIBLE);
+        }else{
+            signIn.getBackground().mutate().setAlpha(255);
+            loading.hide();
+            loading.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    //超时登入事件
+    private void outTimeClick(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                setAlpha(signIn,255);
-                loading.hide();
-                loading.setVisibility(View.INVISIBLE);
+                loadingView(false);
                 Toast("超时登入,请重试");
             }
         });
     }
-    private void loadClick() {
+
+    //超时登入处理
+    private void outTimeLoading() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(9000);
-                    if (connect!=null){
-                        if (!connect.socket.isConnected()) {
-                            outTimeConn();
-                            connect.closeSocket();
-                        }
-                    }else{
-                        outTimeConn();
+                    Thread.sleep(8000);
+                    if (Connect.getSocket()==null){
+                        outTimeClick();
                     }
+//                    if (connect!=null){
+//                        if (!connect.socket.isConnected()) {
+//                            outTimeClick();
+//                            connect.closeSocket();
+//                        }
+//                    }else{
+//                        outTimeClick();
+//                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -143,34 +190,35 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
             }
         }).start();
     }
-
-    private void setAlpha(Button button,int num){
-        button.getBackground().mutate().setAlpha(num);
-    }
     @Override
     protected void onPause() {
         super.onPause();
-        setAlpha(signIn,255);
-        loading.hide();
-        loading.setVisibility(View.INVISIBLE);
-        try {
-            if (connect!=null){
-                connect.closeInput();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        loadingView(false);
+
+//        try {
+//            if (connect!=null){
+//                connect.closeInput();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        account.setText("");
+        password.setText("");
+        checkBox.setChecked(false);
+        account.requestFocus();
+        password.clearFocus();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         try {
-            if (connect!=null){
-                connect.closeSocket();
+            if (Connect.getSocket()!=null){
+                Connect.getSocket().close();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }

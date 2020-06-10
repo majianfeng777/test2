@@ -102,23 +102,40 @@ public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_
             @Override
             public void run() {
                 try {
-                    Connect connect=new Connect();
-                    connect.post("into");
-                    String[] data;
-                    if ((data=connect.get().split(","))!=null){
-                        for (int i=0;i<data.length;i++){
-                            String[] mdata=data[i].split("_");
-                            for (int m=0;m<4;m++){
-                                if (mdata[m].equals("")||mdata[m].equals(" ")){
-                                    mdata[m]="0";
+                    if (Connect.getSocket().isConnected()){
+                        Connect.post("into");
+                        String[] data;
+                        if ((data=Connect.get().split(","))!=null){
+                            for (int i=0;i<data.length;i++){
+                                String[] mdata=data[i].split("_");
+                                for (int m=0;m<4;m++){
+                                    if (mdata[m].equals("")||mdata[m].equals(" ")){
+                                        mdata[m]="0";
+                                    }
                                 }
+                                listViewClassroom_item ndata=new listViewClassroom_item(Integer.valueOf(mdata[0]),Integer.valueOf(mdata[1]),Integer.valueOf(mdata[2]),mdata[3]);
+                                list.add(ndata);
                             }
-                            listViewClassroom_item ndata=new listViewClassroom_item(Integer.valueOf(mdata[0]),Integer.valueOf(mdata[1]),Integer.valueOf(mdata[2]),mdata[3]);
-                            list.add(ndata);
+                            mContext.startActivity(new Intent(mContext, listViewClassroom.class));
                         }
-                        mContext.startActivity(new Intent(mContext, listViewClassroom.class));
-                        connect.closeInput();
                     }
+//                    Connect connect=new Connect();
+//                    connect.post("into");
+//                    String[] data;
+//                    if ((data=connect.get().split(","))!=null){
+//                        for (int i=0;i<data.length;i++){
+//                            String[] mdata=data[i].split("_");
+//                            for (int m=0;m<4;m++){
+//                                if (mdata[m].equals("")||mdata[m].equals(" ")){
+//                                    mdata[m]="0";
+//                                }
+//                            }
+//                            listViewClassroom_item ndata=new listViewClassroom_item(Integer.valueOf(mdata[0]),Integer.valueOf(mdata[1]),Integer.valueOf(mdata[2]),mdata[3]);
+//                            list.add(ndata);
+//                        }
+//                        mContext.startActivity(new Intent(mContext, listViewClassroom.class));
+//                        connect.closeInput();
+//                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();

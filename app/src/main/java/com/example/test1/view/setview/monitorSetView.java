@@ -16,7 +16,6 @@ public class monitorSetView extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.monitorsetview);
         init();
-
     }
     private void init() {
         btn_set_back=(Button)findViewById(R.id.btn_set_back);
