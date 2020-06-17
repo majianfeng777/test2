@@ -61,53 +61,29 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
                 try {
                     if (Connect.getSocket().isConnected()){
                         Connect.post(account.getText().toString()+"_"+password.getText().toString());
-                    }
-                    final String response;
-                    if ((response=Connect.get())!=null){
-                        if (response.equals("true")){
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast("登入成功");
-                                }
-                            });
-                            Log.d("loginView:    ","true");
-                            startActivity();
+                        final String response;
+                        if ((response=Connect.get())!=null){
+                            if (response.equals("true")){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast("登入成功");
+                                    }
+                                });
+                                Log.d("loginView:    ","true");
+                                startActivity();
+                            }
+                            else{
+                                Log.d("loginView:     ","false");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast(response);
+                                    }
+                                });
+                            }
                         }
-                        else{
-                            Log.d("loginView:     ","false");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast(response);
-                                }
-                            });
-                        }
                     }
-//                    connect=new Connect();
-//                    connect.post(account.getText().toString()+"_"+password.getText().toString());
-//                    final String response;
-//                    if ((response=connect.get())!=null){
-//                        if (response.equals("true")){
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    Toast("登入成功");
-//                                }
-//                            });
-//                            Log.d("loginView:    ","true");
-//                            startActivity();
-//                        }
-//                        else{
-//                            Log.d("loginView:     ","false");
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    Toast(response);
-//                                }
-//                            });
-//                        }
-//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -170,18 +146,10 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
             @Override
             public void run() {
                 try {
-                    Thread.sleep(8000);
-                    if (Connect.getSocket()==null){
+                    Thread.sleep(7000);
+                    if (!Connect.getSocket().isConnected()){
                         outTimeClick();
                     }
-//                    if (connect!=null){
-//                        if (!connect.socket.isConnected()) {
-//                            outTimeClick();
-//                            connect.closeSocket();
-//                        }
-//                    }else{
-//                        outTimeClick();
-//                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -194,14 +162,6 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
     protected void onPause() {
         super.onPause();
         loadingView(false);
-
-//        try {
-//            if (connect!=null){
-//                connect.closeInput();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         account.setText("");
         password.setText("");
         checkBox.setChecked(false);

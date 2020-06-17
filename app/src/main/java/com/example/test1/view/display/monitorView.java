@@ -146,7 +146,7 @@ public class monitorView extends AppCompatActivity implements View.OnClickListen
         EZOpenSDK.showSDKLog(true);
         EZOpenSDK.enableP2P(false);
         EZOpenSDK.initLib(this.getApplication(), "43806636d1ec4c348d784427674511cf");
-//        getResponse();    //发送POST请求获取返回数据 用JSONObject解析
+        getResponse();    //发送POST请求获取返回数据 用JSONObject解析
         surfaceView.getHolder().addCallback(callback);
     }
 

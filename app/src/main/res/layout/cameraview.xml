@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <include layout="@layout/cameraview_title"/>
-    <SurfaceView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
-        android:id="@+id/camera_surfaceview"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/blue"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="当前教室人数："
-                android:textSize="22sp"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/text_cameraview"
-                android:text=""
-                android:textSize="23sp"/>
-        </LinearLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/onTouchLinearLayou"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#CD000000">
 
-    </LinearLayout>
-</LinearLayout>
+    <TextureView
+        android:id="@+id/cView"
+        android:layout_width="match_parent"
+        android:layout_height="500dp" />
+
+    <TextureView
+        android:id="@+id/rView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignStart="@id/cView"
+        android:layout_alignTop="@id/cView"
+        android:layout_alignEnd="@id/cView"
+        android:layout_alignBottom="@id/cView" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="233dp"
+        android:layout_alignParentBottom="true"
+        >
+        <Button
+            android:id="@+id/btn_openCamera"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/button_syle"/>
+    </RelativeLayout>
+
+</RelativeLayout>
