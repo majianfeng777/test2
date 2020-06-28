@@ -13,7 +13,7 @@ public class Connect {
     public static Socket socket;
     public static InputStream inputStream;
     public static OutputStream outputStream;
-    public static String ip="192.168.43.73";
+    public static String ip="192.168.43.57";
     public static int port=9988;
     public Connect()  {
 

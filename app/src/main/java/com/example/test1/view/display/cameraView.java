@@ -47,9 +47,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.test1.R;
-import com.example.test1.util.Connect;
 import com.example.test1.util.TextSpeech;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,16 +77,11 @@ public class cameraView extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
-
     private TextureView cView;//用于相机预览
     private TextureView rView;//用于标注人脸
     private ImageView imageView;//拍照照片显示
-    private TextView textView;
+    private TextView text_result;
     private Button btnOpen;
-    private Button btnFront;
-    private Button btnBack;
-    private Button btnClose;
-    private Button btnCapture;
     private Surface previewSurface;//预览Surface
     private ImageReader cImageReader;
     private Surface captureSurface;//拍照Surface
@@ -101,7 +96,6 @@ public class cameraView extends AppCompatActivity {
     CaptureRequest.Builder captureRequestBuilder;
     CaptureRequest captureRequest;
     CameraCaptureSession.CaptureCallback captureCallback;
-    TextSpeech textSpeech;
     int[] faceDetectModes;
     Size captureSize;
     boolean isFront;
@@ -109,6 +103,8 @@ public class cameraView extends AppCompatActivity {
     Bitmap bitmap,imgToShow;
     boolean isFace,isPhoto=false;
     String base64Pitcure;
+    TextSpeech textSpeech;
+    String status;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +116,10 @@ public class cameraView extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openCamera(true);
+                btnOpen.setVisibility(View.INVISIBLE);
+                text_result.setVisibility(View.VISIBLE);
+                text_result.setText("待检测...");
+                text_result.setTextColor(Color.parseColor("#FFEB3B"));
             }
         });
         timer();
@@ -130,11 +130,10 @@ public class cameraView extends AppCompatActivity {
      */
     private void initVIew() {
         btnOpen=findViewById(R.id.btn_openCamera);
+        text_result=findViewById(R.id.text_result);
         cView = findViewById(R.id.cView);
         rView = findViewById(R.id.rView);
-        //隐藏背景色，以免标注人脸时挡住预览画面
         rView.setAlpha(0.9f);
-
     }
     Size cPixelSize;
     int cOrientation;
@@ -171,11 +170,11 @@ public class cameraView extends AppCompatActivity {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
-//                 here to request the missing permissions, and then overriding
-//                   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                                                          int[] grantResults)
-//                 to handle the case where the user grants the permission. See the documentation
-//                 for ActivityCompat#requestPermissions for more details.
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
                 Toast.makeText(this, "请授予摄像头权限", Toast.LENGTH_LONG).show();
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
                 return;
@@ -369,6 +368,7 @@ public class cameraView extends AppCompatActivity {
             }else{
                 isFace=false;
             }
+
         }
 
 //        showMessage(false,String.valueOf(isFace));
@@ -378,8 +378,8 @@ public class cameraView extends AppCompatActivity {
         if (faces.length > 0) {
             for (int i = 0; i < faces.length; i++) {
                 Rect fRect = faces[i].getBounds();
-                Log("[R" + i + "]:[left:" + fRect.left + ",top:" + fRect.top + ",right:" + fRect.right + ",bottom:" + fRect.bottom + "]");
-                showMessage(true, "[R" + i + "]:[left:" + fRect.left + ",top:" + fRect.top + ",right:" + fRect.right + ",bottom:" + fRect.bottom + "]");
+              //  Log("[R" + i + "]:[left:" + fRect.left + ",top:" + fRect.top + ",right:" + fRect.right + ",bottom:" + fRect.bottom + "]");
+               // showMessage(true, "[R" + i + "]:[left:" + fRect.left + ",top:" + fRect.top + ",right:" + fRect.right + ",bottom:" + fRect.bottom + "]");
                 //人脸检测坐标基于相机成像画面尺寸以及坐标原点。此处进行比例换算
                 //成像画面与方框绘制画布长宽比比例（同画面角度情况下的长宽比例（此处前后摄像头成像画面相对预览画面倒置（±90°），计算比例时长宽互换））
                 float scaleWidth = canvas.getHeight() * 1.0f / cPixelSize.getWidth();
@@ -389,8 +389,8 @@ public class cameraView extends AppCompatActivity {
                 int t = (int) (fRect.top * scaleHeight);
                 int r = (int) (fRect.right * scaleWidth);
                 int b = (int) (fRect.bottom * scaleHeight);
-                Log("[T" + i + "]:[left:" + l + ",top:" + t + ",right:" + r + ",bottom:" + b + "]");
-                showMessage(true, "[T" + i + "]:[left:" + l + ",top:" + t + ",right:" + r + ",bottom:" + b + "]");
+              //  Log("[T" + i + "]:[left:" + l + ",top:" + t + ",right:" + r + ",bottom:" + b + "]");
+                //showMessage(true, "[T" + i + "]:[left:" + l + ",top:" + t + ",right:" + r + ",bottom:" + b + "]");
                 if (isFront) {
                     //此处前置摄像头成像画面相对于预览画面顺时针90°+翻转。left、top、bottom、right变为bottom、right、top、left，并且由于坐标原点由左上角变为右下角，X,Y方向都要进行坐标换算
                     canvas.drawRect(canvas.getWidth() - b, canvas.getHeight() - r, canvas.getWidth() - t, canvas.getHeight() - l, getPaint());
@@ -411,10 +411,17 @@ public class cameraView extends AppCompatActivity {
                 try {
                     while (true){
                         if (isFace){
-                            Thread.sleep(3000);
+                            Thread.sleep(4000);
                             if (isFace){
                                 isPhoto=true;
                                 isFace=false;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        text_result.setText("检测中！");
+                                        text_result.setTextColor(Color.parseColor("#FF0000"));
+                                    }
+                                });
                                 executeCapture(); //拍照
                                 showMessage(false,"获取人像:"+getCaptureSize());
                             }
@@ -499,9 +506,9 @@ public class cameraView extends AppCompatActivity {
                 captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
                 captureRequestBuilder.addTarget(getCaptureSurface());
                 //TODO 1 照片旋转
-//                int rotation = getWindowManager().getDefaultDisplay().getRotation();
-//                int rotationTo = getOrientation(rotation);
-//                captureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotationTo);
+                int rotation = getWindowManager().getDefaultDisplay().getRotation();
+                int rotationTo = getOrientation(rotation);
+                captureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotationTo);
             } catch (CameraAccessException e) {
                 Log(Log.getStackTraceString(e));
             }
@@ -548,10 +555,11 @@ public class cameraView extends AppCompatActivity {
             buffer.get(data);
             image.close();
             buffer.clear();
-            showMessage(false,"image!=null");
+         //   showMessage(false,"image!=null");
         }else showMessage(false,"image==nul");
 
         if (bitmap!=null){
+
             bitmap.recycle();
             bitmap=null;
         }
@@ -559,28 +567,71 @@ public class cameraView extends AppCompatActivity {
         Matrix matrix=new Matrix();
         matrix.setRotate(-90,bitmap.getWidth(),bitmap.getHeight());
         imgToShow = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,false);
-        imgToShow=scaleBitmap(imgToShow,0.05f);
+        imgToShow=scaleBitmap(imgToShow,0.25f);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (bitmap!=null){
-                   base64Pitcure=bitmaptoString(imgToShow);
+                if (imgToShow!=null){
+                    base64Pitcure=bitmaptoString(imgToShow);
                     showMessage(false,base64Pitcure);
-                    isPhoto=false;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(cameraView.this,"获取照片",Toast.LENGTH_SHORT).show();
                         }
                     });
-                    getResponse();   //发送POST请求 得到返回值
+                    getResponse();
                 }else showMessage(false,"bitmap=null");
 
             }
         }).start();
+
         data=null;
         Runtime.getRuntime().gc();
+    }
+
+    public static Bitmap reducingBitmapSampleFromPath(String imgPath, int reqWidth, int reqHeight) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;// 读取大小不读取内容
+        options.inPreferredConfig = Bitmap.Config.RGB_565;// 设置图片每个像素占2字节，没有透明度
+        BitmapFactory.decodeFile(imgPath, options);// options读取图片
+
+        double outWidth = options.outWidth;
+        double outHeight = options.outHeight;// 获取到当前图片宽高
+        int inSampleSize = 1;
+
+        /*
+        先计算原图片宽高比ratio=width/height，再计算限定的范围的宽高比比reqRatio，
+        若reqRatio > ratio，则说明限定的范围更加细长，则以高为标准计算inSampleSize
+        否则，则说明限定范围更加粗矮，则以宽为计算标准
+         */
+        double ratio = outWidth / outHeight;
+        double reqRatio = reqWidth / reqHeight;
+        if (reqRatio > ratio)
+            while (outHeight / inSampleSize > reqHeight) inSampleSize *= 2;
+        else
+            while (outWidth / inSampleSize > reqWidth) inSampleSize *= 2;
+
+        options.inSampleSize = inSampleSize;
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(imgPath, options);
+    }
+    private Bitmap scaleBitmap(Bitmap origin, int newWidth, int newHeight) {
+        if (origin == null) {
+            return null;
+        }
+        int height = origin.getHeight();
+        int width = origin.getWidth();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);// 使用后乘
+        Bitmap newBM = Bitmap.createBitmap(origin, 0, 0, width, height, matrix, false);
+        if (!origin.isRecycled()) {
+            origin.recycle();
+        }
+        return newBM;
     }
     private Bitmap scaleBitmap(Bitmap origin, float ratio) {
         if (origin == null) {
@@ -600,16 +651,13 @@ public class cameraView extends AppCompatActivity {
     public String bitmaptoString(Bitmap bitmap) {
         // 将Bitmap转换成字符串
         String string = null;
-        boolean isNull;
         ByteArrayOutputStream bStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bStream);
         byte[] bytes = bStream.toByteArray();
         string = Base64.encodeToString(bytes, Base64.DEFAULT);
-        int len=string.length();
-        showMessage(false,String.valueOf(len));
         return string;
     }
-
+    double score;
 
     /*---------------------------------拍照相关---------------------------------*/
     //显示数据
@@ -627,59 +675,98 @@ public class cameraView extends AppCompatActivity {
             }
         });
     }
+    private void  sendMessage(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
+            }
+        }).start();
+    }
     //发送请求 得到识别结果
     private void getResponse() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    OkHttpClient client=new OkHttpClient();
+                    OkHttpClient client= new OkHttpClient();
                     RequestBody requestBody=new FormBody.Builder().add("image_data",base64Pitcure)
                             .add("img_num","1").build();
                     Request request=new Request.Builder()
-                            .url("http://192.168.1.115:8001/facerecg")
+                            .url("http://192.168.43.57:8001/facerecg")
                             .post(requestBody)
                             .build();
                     Response response=client.newCall(request).execute();
                     String responseData=response.body().string();
                     parseJSONWithJSONObject(responseData);
                 } catch (IOException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(cameraView.this,"网络出错",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    e.printStackTrace();
+                }
+                isPhoto=false;
+            }
+        }).start();
+    }
+
+    private void parseJSONWithJSONObject(String responseData) {
+        try {
+            JSONObject jsonObject1=new JSONObject(responseData);
+            status=jsonObject1.getString("status");  //status为状态码,非零表示异常
+            if (status.equals("0")){
+                String result=jsonObject1.getString("result");
+                JSONArray jsonArray=new JSONArray(result);
+                JSONObject jsonObject2=jsonArray.getJSONObject(0);
+                score=jsonObject2.getDouble("score");
+                if (score>0.7){
+//                    Show("识别成功,相似度百分之"+(score*100),"通过！");
+                    Show("通过","通过！","#01BA08");
+                }else{
+//                    Show("识别失败","不通过！");
+                    Show("不通过","不通过！","#FF0000");
+                }
+            }else{
+                final String errmsg=jsonObject1.getString("errmsg");
+                Show("请重试","请重试！","#FF0000");
+            }
+            showMessage(false,responseData);
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void Show(final String speech, final String result, final String textColor){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textSpeech=new TextSpeech(cameraView.this,speech);
+//                Toast.makeText(cameraView.this,"score："+score,Toast.LENGTH_SHORT).show();
+                text_result.setText(result);
+                text_result.setTextColor(Color.parseColor(textColor));
+            }
+        });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            text_result.setText("待检测...");
+                            text_result.setTextColor(Color.parseColor("#FFEB3B"));
+                        }
+                    });
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
     }
-    private void parseJSONWithJSONObject(String responseData) {
-        try {
-            JSONObject jsonObject1=new JSONObject(responseData);
-            final String status=jsonObject1.getString("status");  //status为状态码,非零表示异常
-//             String errmsg=jsonObject1.getString("errmsg");
-//            showMessage(false,"status:"+status+"errmsg:"+errmsg);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (status.equals("0")){
-                        textSpeech=new TextSpeech(cameraView.this,"识别成功");
-                    }else{
-                        textSpeech=new TextSpeech(cameraView.this,"识别失败");
-                    }
-                    Toast.makeText(cameraView.this,"status:"+status,Toast.LENGTH_SHORT).show();
-                }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        if (textSpeech!=null){
-            textSpeech.stop();
-        }
-        super.onPause();
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

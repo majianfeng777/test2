@@ -102,12 +102,12 @@
             >
             <CheckBox
                 android:layout_marginLeft="50dp"
-                android:id="@+id/admin"
+                android:id="@+id/btn_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:tag="false"
-                android:text="以管理员身份登入"
+                android:text="显示密码"
                 android:textColor="@android:color/black"
                 />
         </LinearLayout>
