@@ -1,45 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/onTouchLinearLayou"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#CD000000">
-
-    <TextureView
-        android:id="@+id/cView"
-        android:layout_width="match_parent"
-        android:layout_height="500dp" />
-
-    <TextureView
-        android:id="@+id/rView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_alignStart="@id/cView"
-        android:layout_alignTop="@id/cView"
-        android:layout_alignEnd="@id/cView"
-        android:layout_alignBottom="@id/cView" />
+    android:orientation="vertical">
     <RelativeLayout
+        android:background="#122020"
         android:layout_width="match_parent"
-        android:layout_height="233dp"
-        android:layout_alignParentBottom="true"
-        >
-        <Button
-            android:id="@+id/btn_openCamera"
-            android:layout_width="120dp"
-            android:layout_height="60dp"
-            android:layout_centerInParent="true"
-            android:visibility="visible"
-            android:background="@drawable/button_syle"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/text_result"
+            android:text="人脸识别系统"
+            android:textSize="32sp"
+            android:textColor="#FFFFFF"
+            android:layout_centerInParent="true"
+            android:id="@+id/text_facedect" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:text="点击头像开启"
+            android:id="@+id/text_status"
+            android:layout_below="@id/text_facedect"
+            android:layout_centerInParent="true"
+            android:textColor="@android:color/holo_blue_dark"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:background="#CD000000">
+        <TextureView
+            android:id="@+id/cView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <TextureView
+            android:id="@+id/rView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_alignStart="@id/cView"
+            android:layout_alignTop="@id/cView"
+            android:layout_alignEnd="@id/cView"
+            android:layout_alignBottom="@id/cView"
+            />
+<!--        <com.nelson.circlelayout.CircleLayout-->
+<!--            android:id="@+id/circleLayout"-->
+<!--            android:layout_width="400dp"-->
+<!--            android:layout_height="400dp"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            app:radium="150dp"-->
+<!--            android:background="@drawable/face0"-->
+<!--            android:visibility="invisible">-->
+<!--&lt;!&ndash;            <ImageView&ndash;&gt;-->
+<!--&lt;!&ndash;                android:id="@+id/image_face"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_centerInParent="true"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_width="400dp"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_height="400dp"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:background="@drawable/face0"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:visibility="visible"/>&ndash;&gt;-->
+<!--        </com.nelson.circlelayout.CircleLayout>-->
+
+<!--        <com.gcssloop.widget.RCRelativeLayout-->
+<!--            android:id="@+id/circleLayout"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:round_corner="150dp"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            >-->
+<!--            <ImageView-->
+<!--                android:id="@+id/image_face"-->
+<!--                android:layout_centerInParent="true"-->
+<!--                android:layout_width="400dp"-->
+<!--                android:layout_height="400dp"-->
+<!--                android:background="@drawable/face0"-->
+<!--                android:visibility="visible"/>-->
+<!--        </com.gcssloop.widget.RCRelativeLayout>-->
+        <ImageView
+            android:id="@+id/image_face"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:background="@drawable/t1"
             android:layout_centerInParent="true"
             android:visibility="invisible"
-            android:textSize="65sp"
-            android:textColor="#FF0000"
+            />
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            android:textColor="#FFFFFF"
+            android:textSize="150sp"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"/>
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="150dp"
+            android:background="@drawable/cha"
+            android:layout_centerInParent="true"
+            android:id="@+id/wrong"
+            android:visibility="invisible"/>
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="150dp"
+            android:background="@drawable/gou"
+            android:layout_centerInParent="true"
+            android:id="@+id/yes"
+            android:visibility="invisible"
             />
     </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#122020">
+        <ImageView
+            android:id="@+id/start"
+            android:layout_centerInParent="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/face"/>
+    </RelativeLayout>
 
-</RelativeLayout>
+
+</LinearLayout>

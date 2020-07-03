@@ -1,80 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:background="@android:color/white">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center">
-        <TextView
-            android:textColor="@android:color/black"
-            android:id="@+id/classRoom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="教室："
-            />
-        <TextView
-            android:textColor="@android:color/black"
-            android:id="@+id/classNum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center">
-        <TextView
-            android:textColor="@android:color/black"
-            android:id="@+id/classStudent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="学生："/>
-        <TextView
-            android:textColor="@android:color/black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/studentNum"
-            android:text=""/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center">
-        <TextView
-            android:textColor="@android:color/black"
-            android:id="@+id/arrived"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="已到："/>
-        <TextView
-            android:textColor="@android:color/black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/arrivedNum"
-            android:text=""/>
-    </LinearLayout>
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:background="#671E88E5">
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:gravity="right">
+        android:layout_height="match_parent">
         <ImageView
-            android:id="@+id/item_classroom_next"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/next"/>
+            android:layout_margin="6dp"
+            android:id="@+id/image_item_classroom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/classroom"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="0dp"
+        android:layout_weight="4"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="right"
+        android:layout_marginRight="20dp"
+        >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:textColor="@android:color/black"
+                android:id="@+id/classRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="教室："
+                android:textSize="15sp"
+                />
+            <TextView
+                android:textColor="@android:color/black"
+                android:id="@+id/classNum"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="6815"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:textColor="@android:color/black"
+                android:id="@+id/classStudent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="学生："
+                android:textSize="15sp"/>
+            <TextView
+                android:textColor="@android:color/black"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/studentNum"
+                android:text="20"
+                android:textSize="15sp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:textColor="@android:color/black"
+                android:id="@+id/arrived"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="已到："
+                android:textSize="15sp"/>
+            <TextView
+                android:textColor="@android:color/black"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/arrivedNum"
+                android:text="50"
+                android:textSize="15sp"/>
+        </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+
+
 </LinearLayout>

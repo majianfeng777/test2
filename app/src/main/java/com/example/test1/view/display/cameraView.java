@@ -48,7 +48,6 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.test1.R;
 import com.example.test1.util.TextSpeech;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,26 +84,30 @@ public class cameraView extends AppCompatActivity {
     private Surface previewSurface;//预览Surface
     private ImageReader cImageReader;
     private Surface captureSurface;//拍照Surface
-    HandlerThread cHandlerThread;//相机处理线程
-    Handler cHandler;//相机处理
-    CameraDevice cDevice;
-    CameraCaptureSession cSession;
-    CameraDevice.StateCallback cDeviceOpenCallback = null;//相机开启回调
-    CaptureRequest.Builder previewRequestBuilder;//预览请求构建
-    CaptureRequest previewRequest;//预览请求
-    CameraCaptureSession.CaptureCallback previewCallback;//预览回调
-    CaptureRequest.Builder captureRequestBuilder;
-    CaptureRequest captureRequest;
-    CameraCaptureSession.CaptureCallback captureCallback;
-    int[] faceDetectModes;
-    Size captureSize;
-    boolean isFront;
-    Paint pb;
-    Bitmap bitmap,imgToShow;
-    boolean isFace,isPhoto=false;
-    String base64Pitcure;
-    TextSpeech textSpeech;
-    String status;
+    private HandlerThread cHandlerThread;//相机处理线程
+    private Handler cHandler;//相机处理
+    private CameraDevice cDevice;
+    private CameraCaptureSession cSession;
+    private CameraDevice.StateCallback cDeviceOpenCallback = null;//相机开启回调
+    private CaptureRequest.Builder previewRequestBuilder;//预览请求构建
+    private CaptureRequest previewRequest;//预览请求
+    private CameraCaptureSession.CaptureCallback previewCallback;//预览回调
+    private CaptureRequest.Builder captureRequestBuilder;
+    private CaptureRequest captureRequest;
+    private CameraCaptureSession.CaptureCallback captureCallback;
+    private int[] faceDetectModes;
+    private Size captureSize;
+    private boolean isFront;
+    private Paint pb;
+    private Bitmap bitmap,imgToShow;
+    private boolean isFace,isPhoto=false;
+    private String base64Pitcure;
+    private TextSpeech textSpeech;
+    private String status;
+    private ImageView image_face;
+    private ImageView image_start;
+    private TextView text_time;
+    private ImageView image_wrong,image_yes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,16 +115,16 @@ public class cameraView extends AppCompatActivity {
         //GlobalExceptionHandler catchHandler = GlobalExceptionHandler.getInstance();
         //catchHandler.init(this.getApplication());
         initVIew();
-        btnOpen.setOnClickListener(new View.OnClickListener() {
+        image_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCamera(true);
-                btnOpen.setVisibility(View.INVISIBLE);
-                text_result.setVisibility(View.VISIBLE);
                 text_result.setText("待检测...");
                 text_result.setTextColor(Color.parseColor("#FFEB3B"));
+                openCamera(true);
+                image_start.setEnabled(false);
             }
         });
+
         timer();
     }
 
@@ -129,11 +132,18 @@ public class cameraView extends AppCompatActivity {
      * 初始化界面
      */
     private void initVIew() {
-        btnOpen=findViewById(R.id.btn_openCamera);
-        text_result=findViewById(R.id.text_result);
+        text_result=findViewById(R.id.text_status);
+        image_face=findViewById(R.id.image_face);
+        image_start=findViewById(R.id.start);
+        text_time=findViewById(R.id.time);
+        image_wrong=findViewById(R.id.wrong);
+        image_yes=findViewById(R.id.yes);
         cView = findViewById(R.id.cView);
         rView = findViewById(R.id.rView);
         rView.setAlpha(0.9f);
+//        image_face.setBackgroundDrawable(animation_detect);
+
+
     }
     Size cPixelSize;
     int cOrientation;
@@ -226,6 +236,7 @@ public class cameraView extends AppCompatActivity {
                 public void onOpened(@NonNull CameraDevice camera) {
                     cDevice = camera;
                     try {
+
                         //创建Session，需先完成画面呈现目标（此处为预览和拍照Surface）的初始化
                         camera.createCaptureSession(Arrays.asList(getPreviewSurface(), getCaptureSurface()), new CameraCaptureSession.StateCallback() {
                             @Override
@@ -356,16 +367,16 @@ public class cameraView extends AppCompatActivity {
      *
      * @param result
      */
-
-
     private void onCameraImagePreviewed(CaptureResult result) {
         Face faces[]= result.get(CaptureResult.STATISTICS_FACES);
         //检测人脸个数 faces.length
         if (isPhoto!=true){
             if (faces.length>0){
+                image_face(true);
                 isFace=true;
                 showMessage(false, "检测到有人");
             }else{
+                image_face(false);
                 isFace=false;
             }
 
@@ -393,7 +404,7 @@ public class cameraView extends AppCompatActivity {
                 //showMessage(true, "[T" + i + "]:[left:" + l + ",top:" + t + ",right:" + r + ",bottom:" + b + "]");
                 if (isFront) {
                     //此处前置摄像头成像画面相对于预览画面顺时针90°+翻转。left、top、bottom、right变为bottom、right、top、left，并且由于坐标原点由左上角变为右下角，X,Y方向都要进行坐标换算
-                    canvas.drawRect(canvas.getWidth() - b, canvas.getHeight() - r, canvas.getWidth() - t, canvas.getHeight() - l, getPaint());
+//                    canvas.drawRect(canvas.getWidth() - b, canvas.getHeight() - r, canvas.getWidth() - t, canvas.getHeight() - l, getPaint());
                 } else {
                     //此处后置摄像头成像画面相对于预览画面顺时针270°，left、top、bottom、right变为bottom、left、top、right，并且由于坐标原点由左上角变为左下角，Y方向需要进行坐标换算
                     canvas.drawRect(canvas.getWidth() - b, l, canvas.getWidth() - t, r, getPaint());
@@ -404,6 +415,24 @@ public class cameraView extends AppCompatActivity {
         rView.unlockCanvasAndPost(canvas);
     }
 
+    private void image_face(final boolean isVisibility){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isVisibility){
+                            image_face.setVisibility(View.VISIBLE);
+                        }else{
+                            image_face.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+            }
+        }).start();
+
+    }
     private void timer() {
         new Thread(new Runnable() {
             @Override
@@ -411,7 +440,7 @@ public class cameraView extends AppCompatActivity {
                 try {
                     while (true){
                         if (isFace){
-                            Thread.sleep(4000);
+                            Thread.sleep(2000);
                             if (isFace){
                                 isPhoto=true;
                                 isFace=false;
@@ -427,7 +456,7 @@ public class cameraView extends AppCompatActivity {
                             }
                         }
                     }
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -559,13 +588,12 @@ public class cameraView extends AppCompatActivity {
         }else showMessage(false,"image==nul");
 
         if (bitmap!=null){
-
             bitmap.recycle();
             bitmap=null;
         }
         bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
         Matrix matrix=new Matrix();
-        matrix.setRotate(-90,bitmap.getWidth(),bitmap.getHeight());
+        matrix.setRotate(0,bitmap.getWidth(),bitmap.getHeight());
         imgToShow = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,false);
         imgToShow=scaleBitmap(imgToShow,0.25f);
 
@@ -578,7 +606,7 @@ public class cameraView extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(cameraView.this,"获取照片",Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(cameraView.this,"获取照片",Toast.LENGTH_SHORT).show();
                         }
                     });
                     getResponse();
@@ -675,7 +703,7 @@ public class cameraView extends AppCompatActivity {
             }
         });
     }
-    private void  sendMessage(){
+    private void sendMessage(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -704,6 +732,8 @@ public class cameraView extends AppCompatActivity {
                         @Override
                         public void run() {
                             Toast.makeText(cameraView.this,"网络出错",Toast.LENGTH_SHORT).show();
+                            text_result.setText("待检测...");
+                            text_result.setTextColor(Color.parseColor("#FFEB3B"));
                         }
                     });
                     e.printStackTrace();
@@ -724,14 +754,15 @@ public class cameraView extends AppCompatActivity {
                 score=jsonObject2.getDouble("score");
                 if (score>0.7){
 //                    Show("识别成功,相似度百分之"+(score*100),"通过！");
-                    Show("通过","通过！","#01BA08");
+                    Show(true,"通过","通过！","#01BA08");
+
                 }else{
 //                    Show("识别失败","不通过！");
-                    Show("不通过","不通过！","#FF0000");
+                    Show(false,"不通过","不通过！","#FF0000");
                 }
             }else{
                 final String errmsg=jsonObject1.getString("errmsg");
-                Show("请重试","请重试！","#FF0000");
+                Show(false,"请重试","请重试！","#FF0000");
             }
             showMessage(false,responseData);
         }catch (JSONException e) {
@@ -739,7 +770,7 @@ public class cameraView extends AppCompatActivity {
         }
     }
 
-    private void Show(final String speech, final String result, final String textColor){
+    private void Show(final boolean status, final String speech, final String result, final String textColor){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -747,6 +778,13 @@ public class cameraView extends AppCompatActivity {
 //                Toast.makeText(cameraView.this,"score："+score,Toast.LENGTH_SHORT).show();
                 text_result.setText(result);
                 text_result.setTextColor(Color.parseColor(textColor));
+                if (status){
+                    image_wrong.setVisibility(View.INVISIBLE);
+                    image_yes.setVisibility(View.VISIBLE);
+                }else{
+                    image_wrong.setVisibility(View.VISIBLE);
+                    image_yes.setVisibility(View.INVISIBLE);
+                }
             }
         });
         new Thread(new Runnable() {
@@ -759,6 +797,8 @@ public class cameraView extends AppCompatActivity {
                         public void run() {
                             text_result.setText("待检测...");
                             text_result.setTextColor(Color.parseColor("#FFEB3B"));
+                            image_wrong.setVisibility(View.INVISIBLE);
+                            image_yes.setVisibility(View.INVISIBLE);
                         }
                     });
                 } catch (InterruptedException e) {

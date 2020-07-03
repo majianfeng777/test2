@@ -62,7 +62,7 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
                     if (Connect.getSocket().isConnected()) {
                         Connect.post(account.getText().toString() + "_" + password.getText().toString());
                         final String[] response;
-                        if ((response = Connect.get().split("_")) != null) {
+                        if ((response = Connect.get().split("_")) != null) {  //服务端需发送2个长度false_0
                             if (response[0].equals("true")) {
                                 if (response[1].equals("1")) {
                                     startActivity(true);
@@ -100,11 +100,12 @@ public class loginView extends AppCompatActivity implements View.OnClickListener
         Intent intent = new Intent(loginView.this, listViewChoice.class);
         if (isAdmin) {
             intent.putExtra("isAdmin",true);
-            startActivity(intent);
         } else {
             intent.putExtra("isAdmin",false);
-            startActivity(intent);
         }
+        intent.putExtra("account",account.getText().toString());
+        intent.putExtra("password",password.getText().toString());
+        startActivity(intent);
     }
 
     //弹出事件

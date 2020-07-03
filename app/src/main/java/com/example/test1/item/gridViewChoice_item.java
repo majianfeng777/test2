@@ -1,9 +1,9 @@
 package com.example.test1.item;
 
-public class listViewChoice_item {
+public class gridViewChoice_item {
     private String text;
     private int imageId;
-    public listViewChoice_item(String text,int imageId){
+    public gridViewChoice_item(String text, int imageId){
         this.text=text;
         this.imageId=imageId;
     }

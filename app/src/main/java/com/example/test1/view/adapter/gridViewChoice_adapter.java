@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test1.R;
-import com.example.test1.item.listViewChoice_item;
+import com.example.test1.item.gridViewChoice_item;
 import com.example.test1.item.listViewClassroom_item;
 import com.example.test1.util.Connect;
 import com.example.test1.view.setview.adminSetView;
@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_adapter.ViewHolder> {
-    private List<listViewChoice_item> itemList;
+public class gridViewChoice_adapter extends RecyclerView.Adapter<gridViewChoice_adapter.ViewHolder> {
+    private List<gridViewChoice_item> itemList;
     public static List<listViewClassroom_item> list;
     private Context mContext;
     static class ViewHolder extends RecyclerView.ViewHolder{
@@ -37,11 +37,11 @@ public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_
             textView=(TextView)itemView.findViewById(R.id.text_choice);
         }
     }
-    public listViewChoice_adapter(List<listViewChoice_item> items, Context context){
+    public gridViewChoice_adapter(List<gridViewChoice_item> items, Context context){
         itemList=items;
         mContext=context;
     }
-    public listViewChoice_adapter(){
+    public gridViewChoice_adapter(){
 
     }
     @NonNull
@@ -85,7 +85,7 @@ public class listViewChoice_adapter extends RecyclerView.Adapter<listViewChoice_
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        listViewChoice_item item=itemList.get(position);
+        gridViewChoice_item item=itemList.get(position);
         holder.textView.setText(item.getText());
         holder.imageView.setImageResource(item.getImageId());
     }

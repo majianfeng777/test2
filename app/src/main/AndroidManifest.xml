@@ -47,6 +47,7 @@
         <activity android:name=".view.display.secondaryCameraView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".view.display.listViewChoice" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".view.setview.adminSetView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".view.display.informationView" android:theme="@style/Theme.AppCompat.NoActionBar"/>
     </application>
 
 </manifest>

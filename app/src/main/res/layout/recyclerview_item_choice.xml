@@ -3,17 +3,16 @@
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
-    android:layout_margin="10dp">
+    android:layout_margin="5dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3">
         <ImageView
-            android:textColor="@android:color/black"
             android:id="@+id/image_item_choice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+
             />
     </LinearLayout>
     <LinearLayout
@@ -27,7 +26,7 @@
             android:id="@+id/text_choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="10sp"
             android:text=""
             />
     </LinearLayout>

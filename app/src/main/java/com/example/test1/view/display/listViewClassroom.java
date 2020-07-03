@@ -13,8 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.test1.R;
 import com.example.test1.item.listViewClassroom_item;
-import com.example.test1.util.Connect;
-import com.example.test1.view.adapter.listViewChoice_adapter;
+import com.example.test1.view.adapter.gridViewChoice_adapter;
 import com.example.test1.view.adapter.listViewClassroom_adapter;
 
 public class listViewClassroom extends AppCompatActivity implements View.OnClickListener {
@@ -26,13 +25,13 @@ public class listViewClassroom extends AppCompatActivity implements View.OnClick
 //        initData();
         Button btn = findViewById(R.id.btn_listview_classroom_back);
         btn.setOnClickListener(this);
-        listViewClassroom_adapter adapter = new listViewClassroom_adapter(listViewClassroom.this, R.layout.list_item_classroom, new listViewChoice_adapter().list);
+        listViewClassroom_adapter adapter = new listViewClassroom_adapter(listViewClassroom.this, R.layout.list_item_classroom, new gridViewChoice_adapter().list);
         final ListView listView = (ListView) findViewById(R.id.listView_classroom);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listViewClassroom_item item = new listViewChoice_adapter().list.get(position);
+                listViewClassroom_item item = new gridViewChoice_adapter().list.get(position);
                 Intent intent2 = new Intent(listViewClassroom.this, cameraView.class);
                 intent2.putExtra("studentNum2", String.valueOf(item.getStudentNum()));
                 startActivity(intent2);    //手机摄像头
