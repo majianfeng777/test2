@@ -440,7 +440,7 @@ public class cameraView extends AppCompatActivity {
                 try {
                     while (true){
                         if (isFace){
-                            Thread.sleep(2000);
+                            Thread.sleep(2500);
                             if (isFace){
                                 isPhoto=true;
                                 isFace=false;
@@ -593,7 +593,7 @@ public class cameraView extends AppCompatActivity {
         }
         bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
         Matrix matrix=new Matrix();
-        matrix.setRotate(0,bitmap.getWidth(),bitmap.getHeight());
+        matrix.setRotate(-90,bitmap.getWidth(),bitmap.getHeight());  //***有些手机获取的照片需要旋转 有些设置不变0就行
         imgToShow = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,false);
         imgToShow=scaleBitmap(imgToShow,0.25f);
 
@@ -619,48 +619,7 @@ public class cameraView extends AppCompatActivity {
         Runtime.getRuntime().gc();
     }
 
-    public static Bitmap reducingBitmapSampleFromPath(String imgPath, int reqWidth, int reqHeight) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;// 读取大小不读取内容
-        options.inPreferredConfig = Bitmap.Config.RGB_565;// 设置图片每个像素占2字节，没有透明度
-        BitmapFactory.decodeFile(imgPath, options);// options读取图片
 
-        double outWidth = options.outWidth;
-        double outHeight = options.outHeight;// 获取到当前图片宽高
-        int inSampleSize = 1;
-
-        /*
-        先计算原图片宽高比ratio=width/height，再计算限定的范围的宽高比比reqRatio，
-        若reqRatio > ratio，则说明限定的范围更加细长，则以高为标准计算inSampleSize
-        否则，则说明限定范围更加粗矮，则以宽为计算标准
-         */
-        double ratio = outWidth / outHeight;
-        double reqRatio = reqWidth / reqHeight;
-        if (reqRatio > ratio)
-            while (outHeight / inSampleSize > reqHeight) inSampleSize *= 2;
-        else
-            while (outWidth / inSampleSize > reqWidth) inSampleSize *= 2;
-
-        options.inSampleSize = inSampleSize;
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(imgPath, options);
-    }
-    private Bitmap scaleBitmap(Bitmap origin, int newWidth, int newHeight) {
-        if (origin == null) {
-            return null;
-        }
-        int height = origin.getHeight();
-        int width = origin.getWidth();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);// 使用后乘
-        Bitmap newBM = Bitmap.createBitmap(origin, 0, 0, width, height, matrix, false);
-        if (!origin.isRecycled()) {
-            origin.recycle();
-        }
-        return newBM;
-    }
     private Bitmap scaleBitmap(Bitmap origin, float ratio) {
         if (origin == null) {
             return null;
@@ -791,7 +750,7 @@ public class cameraView extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1500);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
